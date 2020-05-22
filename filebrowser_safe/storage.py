@@ -98,17 +98,8 @@ class S3BotoStorageMixin(StorageMixin):
             else:
                 raise "The destination file '%s' exists and allow_overwrite is False" % new_file_name
 
-        old_key_name = self._encode_name(self._normalize_name(self._clean_name(old_file_name)))
-        new_key_name = self._encode_name(self._normalize_name(self._clean_name(new_file_name)))
-
-        copy_source = {
-            'Bucket': self.bucket.name,
-            'Key': old_key_name,
-        }
-        extra_args = {
-            'ACL': 'public-read'
-        }
-        self.bucket.copy(copy_source, new_key_name, extra_args)
+        old_file = self.open(old_file_name)
+        self.save(new_file_name, old_file)
         self.delete(old_file_name)
 
     def makedirs(self, name):
